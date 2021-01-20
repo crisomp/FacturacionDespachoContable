@@ -1,0 +1,517 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="despachoContableModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="cliente">
+          <Key>
+            <PropertyRef Name="idCliente" />
+          </Key>
+          <Property Name="idCliente" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="nombreCompleto" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="nit" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="registro" Type="varchar" MaxLength="8" Nullable="false" />
+          <Property Name="giro" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="direccion" Type="varchar" MaxLength="30" Nullable="false" />
+          <Property Name="idEstado" Type="int" Nullable="false" />
+          <Property Name="idDepartamento" Type="int" Nullable="false" />
+          <Property Name="idMunicipio" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="creditoFiscal">
+          <Key>
+            <PropertyRef Name="idCreditoFiscal" />
+          </Key>
+          <Property Name="idCreditoFiscal" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="idCliente" Type="int" Nullable="false" />
+          <Property Name="iva" Type="decimal" Precision="8" Scale="2" Nullable="false" />
+          <Property Name="total" Type="decimal" Precision="12" Scale="2" Nullable="false" />
+          <Property Name="fecha" Type="date" Nullable="false" />
+          <Property Name="numeroDocumento" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="departamento">
+          <Key>
+            <PropertyRef Name="idDepartamento" />
+          </Key>
+          <Property Name="idDepartamento" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="nombre" Type="varchar" MaxLength="30" Nullable="false" />
+        </EntityType>
+        <!--Errores durante la generación:
+advertencia 6002: La tabla o vista 'despachoContable.dbo.detalleCreditoFiscal' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
+        <EntityType Name="detalleCreditoFiscal">
+          <Key>
+            <PropertyRef Name="idDetalle" />
+            <PropertyRef Name="idCreditoFiscal" />
+            <PropertyRef Name="idServicio" />
+            <PropertyRef Name="cantidad" />
+            <PropertyRef Name="precio" />
+            <PropertyRef Name="valor" />
+          </Key>
+          <Property Name="idDetalle" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="idCreditoFiscal" Type="int" Nullable="false" />
+          <Property Name="idServicio" Type="int" Nullable="false" />
+          <Property Name="cantidad" Type="int" Nullable="false" />
+          <Property Name="precio" Type="decimal" Precision="12" Scale="2" Nullable="false" />
+          <Property Name="valor" Type="decimal" Precision="12" Scale="2" Nullable="false" />
+        </EntityType>
+        <EntityType Name="estado">
+          <Key>
+            <PropertyRef Name="idEstado" />
+          </Key>
+          <Property Name="idEstado" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="nombre" Type="varchar" MaxLength="30" Nullable="false" />
+        </EntityType>
+        <EntityType Name="municipio">
+          <Key>
+            <PropertyRef Name="idMunicipio" />
+          </Key>
+          <Property Name="idMunicipio" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="nombre" Type="varchar" MaxLength="30" Nullable="false" />
+        </EntityType>
+        <EntityType Name="servicio">
+          <Key>
+            <PropertyRef Name="idServicio" />
+          </Key>
+          <Property Name="idServicio" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="nombre" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="precio" Type="decimal" Precision="12" Scale="2" Nullable="false" />
+        </EntityType>
+        <EntityType Name="usuario">
+          <Key>
+            <PropertyRef Name="idUsuario" />
+          </Key>
+          <Property Name="idUsuario" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="nombreCompleto" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="usuario" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="contrasena" Type="varchar" MaxLength="10" Nullable="false" />
+        </EntityType>
+        <Association Name="fk_idClienteCreditoFiscal">
+          <End Role="cliente" Type="Self.cliente" Multiplicity="1" />
+          <End Role="creditoFiscal" Type="Self.creditoFiscal" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="cliente">
+              <PropertyRef Name="idCliente" />
+            </Principal>
+            <Dependent Role="creditoFiscal">
+              <PropertyRef Name="idCliente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_idCreditoFiscal_DetalleCreditoFiscal">
+          <End Role="creditoFiscal" Type="Self.creditoFiscal" Multiplicity="1" />
+          <End Role="detalleCreditoFiscal" Type="Self.detalleCreditoFiscal" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="creditoFiscal">
+              <PropertyRef Name="idCreditoFiscal" />
+            </Principal>
+            <Dependent Role="detalleCreditoFiscal">
+              <PropertyRef Name="idCreditoFiscal" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_idDepartamentoCliente">
+          <End Role="departamento" Type="Self.departamento" Multiplicity="1" />
+          <End Role="cliente" Type="Self.cliente" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="departamento">
+              <PropertyRef Name="idDepartamento" />
+            </Principal>
+            <Dependent Role="cliente">
+              <PropertyRef Name="idDepartamento" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_idEstadoCliente">
+          <End Role="estado" Type="Self.estado" Multiplicity="1" />
+          <End Role="cliente" Type="Self.cliente" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="estado">
+              <PropertyRef Name="idEstado" />
+            </Principal>
+            <Dependent Role="cliente">
+              <PropertyRef Name="idEstado" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_idMunicipioCliente">
+          <End Role="municipio" Type="Self.municipio" Multiplicity="1" />
+          <End Role="cliente" Type="Self.cliente" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="municipio">
+              <PropertyRef Name="idMunicipio" />
+            </Principal>
+            <Dependent Role="cliente">
+              <PropertyRef Name="idMunicipio" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_idServicio_DetalleCreditoFiscal">
+          <End Role="servicio" Type="Self.servicio" Multiplicity="1" />
+          <End Role="detalleCreditoFiscal" Type="Self.detalleCreditoFiscal" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="servicio">
+              <PropertyRef Name="idServicio" />
+            </Principal>
+            <Dependent Role="detalleCreditoFiscal">
+              <PropertyRef Name="idServicio" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="despachoContableModelStoreContainer">
+          <EntitySet Name="cliente" EntityType="Self.cliente" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="creditoFiscal" EntityType="Self.creditoFiscal" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="departamento" EntityType="Self.departamento" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="estado" EntityType="Self.estado" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="municipio" EntityType="Self.municipio" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="servicio" EntityType="Self.servicio" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="usuario" EntityType="Self.usuario" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="detalleCreditoFiscal" EntityType="Self.detalleCreditoFiscal" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [detalleCreditoFiscal].[idDetalle] AS [idDetalle], 
+    [detalleCreditoFiscal].[idCreditoFiscal] AS [idCreditoFiscal], 
+    [detalleCreditoFiscal].[idServicio] AS [idServicio], 
+    [detalleCreditoFiscal].[cantidad] AS [cantidad], 
+    [detalleCreditoFiscal].[precio] AS [precio], 
+    [detalleCreditoFiscal].[valor] AS [valor]
+    FROM [dbo].[detalleCreditoFiscal] AS [detalleCreditoFiscal]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="fk_idClienteCreditoFiscal" Association="Self.fk_idClienteCreditoFiscal">
+            <End Role="cliente" EntitySet="cliente" />
+            <End Role="creditoFiscal" EntitySet="creditoFiscal" />
+          </AssociationSet>
+          <AssociationSet Name="fk_idCreditoFiscal_DetalleCreditoFiscal" Association="Self.fk_idCreditoFiscal_DetalleCreditoFiscal">
+            <End Role="creditoFiscal" EntitySet="creditoFiscal" />
+            <End Role="detalleCreditoFiscal" EntitySet="detalleCreditoFiscal" />
+          </AssociationSet>
+          <AssociationSet Name="fk_idDepartamentoCliente" Association="Self.fk_idDepartamentoCliente">
+            <End Role="departamento" EntitySet="departamento" />
+            <End Role="cliente" EntitySet="cliente" />
+          </AssociationSet>
+          <AssociationSet Name="fk_idEstadoCliente" Association="Self.fk_idEstadoCliente">
+            <End Role="estado" EntitySet="estado" />
+            <End Role="cliente" EntitySet="cliente" />
+          </AssociationSet>
+          <AssociationSet Name="fk_idMunicipioCliente" Association="Self.fk_idMunicipioCliente">
+            <End Role="municipio" EntitySet="municipio" />
+            <End Role="cliente" EntitySet="cliente" />
+          </AssociationSet>
+          <AssociationSet Name="fk_idServicio_DetalleCreditoFiscal" Association="Self.fk_idServicio_DetalleCreditoFiscal">
+            <End Role="servicio" EntitySet="servicio" />
+            <End Role="detalleCreditoFiscal" EntitySet="detalleCreditoFiscal" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="despachoContableModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="cliente">
+          <Key>
+            <PropertyRef Name="idCliente" />
+          </Key>
+          <Property Name="idCliente" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="nombreCompleto" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="nit" Type="String" MaxLength="16" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="registro" Type="String" MaxLength="8" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="giro" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="direccion" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="idEstado" Type="Int32" Nullable="false" />
+          <Property Name="idDepartamento" Type="Int32" Nullable="false" />
+          <Property Name="idMunicipio" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="creditoFiscal" Relationship="Self.fk_idClienteCreditoFiscal" FromRole="cliente" ToRole="creditoFiscal" />
+          <NavigationProperty Name="departamento" Relationship="Self.fk_idDepartamentoCliente" FromRole="cliente" ToRole="departamento" />
+          <NavigationProperty Name="estado" Relationship="Self.fk_idEstadoCliente" FromRole="cliente" ToRole="estado" />
+          <NavigationProperty Name="municipio" Relationship="Self.fk_idMunicipioCliente" FromRole="cliente" ToRole="municipio" />
+        </EntityType>
+        <EntityType Name="creditoFiscal">
+          <Key>
+            <PropertyRef Name="idCreditoFiscal" />
+          </Key>
+          <Property Name="idCreditoFiscal" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="idCliente" Type="Int32" Nullable="false" />
+          <Property Name="iva" Type="Decimal" Precision="8" Scale="2" Nullable="false" />
+          <Property Name="total" Type="Decimal" Precision="12" Scale="2" Nullable="false" />
+          <Property Name="fecha" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="numeroDocumento" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="cliente" Relationship="Self.fk_idClienteCreditoFiscal" FromRole="creditoFiscal" ToRole="cliente" />
+          <NavigationProperty Name="detalleCreditoFiscal" Relationship="Self.fk_idCreditoFiscal_DetalleCreditoFiscal" FromRole="creditoFiscal" ToRole="detalleCreditoFiscal" />
+        </EntityType>
+        <EntityType Name="departamento">
+          <Key>
+            <PropertyRef Name="idDepartamento" />
+          </Key>
+          <Property Name="idDepartamento" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="nombre" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="cliente" Relationship="Self.fk_idDepartamentoCliente" FromRole="departamento" ToRole="cliente" />
+        </EntityType>
+        <EntityType Name="estado">
+          <Key>
+            <PropertyRef Name="idEstado" />
+          </Key>
+          <Property Name="idEstado" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="nombre" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="cliente" Relationship="Self.fk_idEstadoCliente" FromRole="estado" ToRole="cliente" />
+        </EntityType>
+        <EntityType Name="municipio">
+          <Key>
+            <PropertyRef Name="idMunicipio" />
+          </Key>
+          <Property Name="idMunicipio" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="nombre" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="cliente" Relationship="Self.fk_idMunicipioCliente" FromRole="municipio" ToRole="cliente" />
+        </EntityType>
+        <EntityType Name="servicio">
+          <Key>
+            <PropertyRef Name="idServicio" />
+          </Key>
+          <Property Name="idServicio" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="nombre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="precio" Type="Decimal" Precision="12" Scale="2" Nullable="false" />
+          <NavigationProperty Name="detalleCreditoFiscal" Relationship="Self.fk_idServicio_DetalleCreditoFiscal" FromRole="servicio" ToRole="detalleCreditoFiscal" />
+        </EntityType>
+        <EntityType Name="usuario">
+          <Key>
+            <PropertyRef Name="idUsuario" />
+          </Key>
+          <Property Name="idUsuario" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="nombreCompleto" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="usuario1" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="contrasena" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+        </EntityType>
+        <EntityType Name="detalleCreditoFiscal">
+          <Key>
+            <PropertyRef Name="idDetalle" />
+            <PropertyRef Name="idCreditoFiscal" />
+            <PropertyRef Name="idServicio" />
+            <PropertyRef Name="cantidad" />
+            <PropertyRef Name="precio" />
+            <PropertyRef Name="valor" />
+          </Key>
+          <Property Name="idDetalle" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="idCreditoFiscal" Type="Int32" Nullable="false" />
+          <Property Name="idServicio" Type="Int32" Nullable="false" />
+          <Property Name="cantidad" Type="Int32" Nullable="false" />
+          <Property Name="precio" Type="Decimal" Precision="12" Scale="2" Nullable="false" />
+          <Property Name="valor" Type="Decimal" Precision="12" Scale="2" Nullable="false" />
+          <NavigationProperty Name="creditoFiscal" Relationship="Self.fk_idCreditoFiscal_DetalleCreditoFiscal" FromRole="detalleCreditoFiscal" ToRole="creditoFiscal" />
+          <NavigationProperty Name="servicio" Relationship="Self.fk_idServicio_DetalleCreditoFiscal" FromRole="detalleCreditoFiscal" ToRole="servicio" />
+        </EntityType>
+        <Association Name="fk_idClienteCreditoFiscal">
+          <End Role="cliente" Type="Self.cliente" Multiplicity="1" />
+          <End Role="creditoFiscal" Type="Self.creditoFiscal" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="cliente">
+              <PropertyRef Name="idCliente" />
+            </Principal>
+            <Dependent Role="creditoFiscal">
+              <PropertyRef Name="idCliente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_idDepartamentoCliente">
+          <End Role="departamento" Type="Self.departamento" Multiplicity="1" />
+          <End Role="cliente" Type="Self.cliente" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="departamento">
+              <PropertyRef Name="idDepartamento" />
+            </Principal>
+            <Dependent Role="cliente">
+              <PropertyRef Name="idDepartamento" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_idEstadoCliente">
+          <End Role="estado" Type="Self.estado" Multiplicity="1" />
+          <End Role="cliente" Type="Self.cliente" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="estado">
+              <PropertyRef Name="idEstado" />
+            </Principal>
+            <Dependent Role="cliente">
+              <PropertyRef Name="idEstado" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_idMunicipioCliente">
+          <End Role="municipio" Type="Self.municipio" Multiplicity="1" />
+          <End Role="cliente" Type="Self.cliente" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="municipio">
+              <PropertyRef Name="idMunicipio" />
+            </Principal>
+            <Dependent Role="cliente">
+              <PropertyRef Name="idMunicipio" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_idCreditoFiscal_DetalleCreditoFiscal">
+          <End Role="creditoFiscal" Type="Self.creditoFiscal" Multiplicity="1" />
+          <End Role="detalleCreditoFiscal" Type="Self.detalleCreditoFiscal" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="creditoFiscal">
+              <PropertyRef Name="idCreditoFiscal" />
+            </Principal>
+            <Dependent Role="detalleCreditoFiscal">
+              <PropertyRef Name="idCreditoFiscal" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_idServicio_DetalleCreditoFiscal">
+          <End Role="servicio" Type="Self.servicio" Multiplicity="1" />
+          <End Role="detalleCreditoFiscal" Type="Self.detalleCreditoFiscal" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="servicio">
+              <PropertyRef Name="idServicio" />
+            </Principal>
+            <Dependent Role="detalleCreditoFiscal">
+              <PropertyRef Name="idServicio" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="despachoContableEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="cliente" EntityType="Self.cliente" />
+          <EntitySet Name="creditoFiscal" EntityType="Self.creditoFiscal" />
+          <EntitySet Name="departamento" EntityType="Self.departamento" />
+          <EntitySet Name="estado" EntityType="Self.estado" />
+          <EntitySet Name="municipio" EntityType="Self.municipio" />
+          <EntitySet Name="servicio" EntityType="Self.servicio" />
+          <EntitySet Name="usuario" EntityType="Self.usuario" />
+          <EntitySet Name="detalleCreditoFiscal" EntityType="Self.detalleCreditoFiscal" />
+          <AssociationSet Name="fk_idClienteCreditoFiscal" Association="Self.fk_idClienteCreditoFiscal">
+            <End Role="cliente" EntitySet="cliente" />
+            <End Role="creditoFiscal" EntitySet="creditoFiscal" />
+          </AssociationSet>
+          <AssociationSet Name="fk_idDepartamentoCliente" Association="Self.fk_idDepartamentoCliente">
+            <End Role="departamento" EntitySet="departamento" />
+            <End Role="cliente" EntitySet="cliente" />
+          </AssociationSet>
+          <AssociationSet Name="fk_idEstadoCliente" Association="Self.fk_idEstadoCliente">
+            <End Role="estado" EntitySet="estado" />
+            <End Role="cliente" EntitySet="cliente" />
+          </AssociationSet>
+          <AssociationSet Name="fk_idMunicipioCliente" Association="Self.fk_idMunicipioCliente">
+            <End Role="municipio" EntitySet="municipio" />
+            <End Role="cliente" EntitySet="cliente" />
+          </AssociationSet>
+          <AssociationSet Name="fk_idCreditoFiscal_DetalleCreditoFiscal" Association="Self.fk_idCreditoFiscal_DetalleCreditoFiscal">
+            <End Role="creditoFiscal" EntitySet="creditoFiscal" />
+            <End Role="detalleCreditoFiscal" EntitySet="detalleCreditoFiscal" />
+          </AssociationSet>
+          <AssociationSet Name="fk_idServicio_DetalleCreditoFiscal" Association="Self.fk_idServicio_DetalleCreditoFiscal">
+            <End Role="servicio" EntitySet="servicio" />
+            <End Role="detalleCreditoFiscal" EntitySet="detalleCreditoFiscal" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="despachoContableModelStoreContainer" CdmEntityContainer="despachoContableEntities">
+          <EntitySetMapping Name="cliente">
+            <EntityTypeMapping TypeName="despachoContableModel.cliente">
+              <MappingFragment StoreEntitySet="cliente">
+                <ScalarProperty Name="idCliente" ColumnName="idCliente" />
+                <ScalarProperty Name="nombreCompleto" ColumnName="nombreCompleto" />
+                <ScalarProperty Name="nit" ColumnName="nit" />
+                <ScalarProperty Name="registro" ColumnName="registro" />
+                <ScalarProperty Name="giro" ColumnName="giro" />
+                <ScalarProperty Name="direccion" ColumnName="direccion" />
+                <ScalarProperty Name="idEstado" ColumnName="idEstado" />
+                <ScalarProperty Name="idDepartamento" ColumnName="idDepartamento" />
+                <ScalarProperty Name="idMunicipio" ColumnName="idMunicipio" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="creditoFiscal">
+            <EntityTypeMapping TypeName="despachoContableModel.creditoFiscal">
+              <MappingFragment StoreEntitySet="creditoFiscal">
+                <ScalarProperty Name="idCreditoFiscal" ColumnName="idCreditoFiscal" />
+                <ScalarProperty Name="idCliente" ColumnName="idCliente" />
+                <ScalarProperty Name="iva" ColumnName="iva" />
+                <ScalarProperty Name="total" ColumnName="total" />
+                <ScalarProperty Name="fecha" ColumnName="fecha" />
+                <ScalarProperty Name="numeroDocumento" ColumnName="numeroDocumento" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="departamento">
+            <EntityTypeMapping TypeName="despachoContableModel.departamento">
+              <MappingFragment StoreEntitySet="departamento">
+                <ScalarProperty Name="idDepartamento" ColumnName="idDepartamento" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="estado">
+            <EntityTypeMapping TypeName="despachoContableModel.estado">
+              <MappingFragment StoreEntitySet="estado">
+                <ScalarProperty Name="idEstado" ColumnName="idEstado" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="municipio">
+            <EntityTypeMapping TypeName="despachoContableModel.municipio">
+              <MappingFragment StoreEntitySet="municipio">
+                <ScalarProperty Name="idMunicipio" ColumnName="idMunicipio" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="servicio">
+            <EntityTypeMapping TypeName="despachoContableModel.servicio">
+              <MappingFragment StoreEntitySet="servicio">
+                <ScalarProperty Name="idServicio" ColumnName="idServicio" />
+                <ScalarProperty Name="nombre" ColumnName="nombre" />
+                <ScalarProperty Name="precio" ColumnName="precio" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="usuario">
+            <EntityTypeMapping TypeName="despachoContableModel.usuario">
+              <MappingFragment StoreEntitySet="usuario">
+                <ScalarProperty Name="idUsuario" ColumnName="idUsuario" />
+                <ScalarProperty Name="nombreCompleto" ColumnName="nombreCompleto" />
+                <ScalarProperty Name="usuario1" ColumnName="usuario" />
+                <ScalarProperty Name="contrasena" ColumnName="contrasena" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="detalleCreditoFiscal">
+            <EntityTypeMapping TypeName="despachoContableModel.detalleCreditoFiscal">
+              <MappingFragment StoreEntitySet="detalleCreditoFiscal">
+                <ScalarProperty Name="idDetalle" ColumnName="idDetalle" />
+                <ScalarProperty Name="idCreditoFiscal" ColumnName="idCreditoFiscal" />
+                <ScalarProperty Name="idServicio" ColumnName="idServicio" />
+                <ScalarProperty Name="cantidad" ColumnName="cantidad" />
+                <ScalarProperty Name="precio" ColumnName="precio" />
+                <ScalarProperty Name="valor" ColumnName="valor" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Ninguno" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

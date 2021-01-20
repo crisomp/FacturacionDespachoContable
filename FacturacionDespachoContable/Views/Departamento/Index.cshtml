@@ -1,0 +1,36 @@
+﻿@model IEnumerable<FacturacionDespachoContable.Models.departamento>
+
+@{
+    ViewBag.Title = "Departamento";
+}
+
+<h2>Departamento</h2>
+<p>
+    <a class="btn btn-outline-primary" href="@Url.Action("Create")">
+        Crear
+        <i class="fa fa-plus-circle"></i>
+
+    </a>
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.nombre)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.nombre)
+            </td>
+            <td>
+                @Html.ActionLink("Editar", "Edit", new { id = item.idDepartamento }) |
+                @Html.ActionLink("Detalles", "Details", new { id = item.idDepartamento })
+            </td>
+        </tr>
+    }
+
+</table>

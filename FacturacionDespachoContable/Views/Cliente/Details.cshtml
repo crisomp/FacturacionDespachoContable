@@ -1,0 +1,82 @@
+﻿@model FacturacionDespachoContable.Models.cliente
+
+@{
+    ViewBag.Title = "Detailles";
+}
+
+<h2>Detailles</h2>
+
+<div>
+    <h4>Cliente</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.nombreCompleto)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.nombreCompleto)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.nit)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.nit)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.registro)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.registro)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.giro)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.giro)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.direccion)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.direccion)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.departamento.nombre)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.departamento.nombre)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.estado.nombre)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.estado.nombre)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.municipio.nombre)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.municipio.nombre)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Editar", "Edit", new { id = Model.idCliente }) |
+    @Html.ActionLink("Regresar", "Index")
+</p>

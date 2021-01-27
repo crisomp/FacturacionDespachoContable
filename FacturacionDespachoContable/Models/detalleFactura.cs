@@ -13,13 +13,14 @@ namespace FacturacionDespachoContable.Models
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
 
-    public partial class detalleCreditoFiscal
+    public partial class detalleFactura
     {
         public int idDetalle { get; set; }
-        public int idCreditoFiscal { get; set; }
+        public int idFactura { get; set; }
 
         [Required(ErrorMessage = "Requerido"), Display(Name = "Servicio")]
         public int idServicio { get; set; }
+
         [Required(ErrorMessage = "Requerido"), Display(Name = "Cantidad")]
         public int cantidad { get; set; }
 
@@ -29,7 +30,7 @@ namespace FacturacionDespachoContable.Models
         [Required(ErrorMessage = "Requerido"), Display(Name = "Valor")]
         public decimal valor { get; set; }
     
-        public virtual creditoFiscal creditoFiscal { get; set; }
+        public virtual factura factura { get; set; }
         public virtual servicio servicio { get; set; }
     }
 }

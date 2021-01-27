@@ -4,22 +4,27 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="7041adf728d64a79ba178ae5ddb94ac3" Name="Diagram1">
+      <Diagram DiagramId="6c7fef3e9ec449e495c8501205df5415" Name="Diagram1">
         <EntityTypeShape EntityType="despachoContableModel.cliente" Width="1.5" PointX="3" PointY="1" IsExpanded="true" />
         <EntityTypeShape EntityType="despachoContableModel.creditoFiscal" Width="1.5" PointX="5.25" PointY="1.5" IsExpanded="true" />
         <EntityTypeShape EntityType="despachoContableModel.departamento" Width="1.5" PointX="0.75" PointY="2" IsExpanded="true" />
+        <EntityTypeShape EntityType="despachoContableModel.detalleCreditoFiscal" Width="1.5" PointX="7.5" PointY="1.5" IsExpanded="true" />
         <EntityTypeShape EntityType="despachoContableModel.estado" Width="1.5" PointX="0.75" PointY="4.75" IsExpanded="true" />
         <EntityTypeShape EntityType="despachoContableModel.municipio" Width="1.5" PointX="0.75" PointY="8.125" IsExpanded="true" />
         <EntityTypeShape EntityType="despachoContableModel.servicio" Width="1.5" PointX="5.25" PointY="5.875" IsExpanded="true" />
         <EntityTypeShape EntityType="despachoContableModel.usuario" Width="1.5" PointX="7.75" PointY="5.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="despachoContableModel.detalleCreditoFiscal" Width="1.5" PointX="7.5" PointY="1.5" IsExpanded="true" />
         <AssociationConnector Association="despachoContableModel.fk_idClienteCreditoFiscal" ManuallyRouted="false" />
         <AssociationConnector Association="despachoContableModel.fk_idDepartamentoCliente" ManuallyRouted="false" />
         <AssociationConnector Association="despachoContableModel.fk_idEstadoCliente" ManuallyRouted="false" />
         <AssociationConnector Association="despachoContableModel.fk_idMunicipioCliente" ManuallyRouted="false" />
         <AssociationConnector Association="despachoContableModel.fk_idCreditoFiscal_DetalleCreditoFiscal" ManuallyRouted="false" />
         <AssociationConnector Association="despachoContableModel.fk_idServicio_DetalleCreditoFiscal" ManuallyRouted="false" />
-      </Diagram>
+        <EntityTypeShape EntityType="despachoContableModel.detalleFactura" Width="1.5" PointX="7.5" PointY="8.75" />
+        <EntityTypeShape EntityType="despachoContableModel.factura" Width="1.5" PointX="5.25" PointY="9.625" />
+        <AssociationConnector Association="despachoContableModel.fk_idClienteFactura" />
+        <AssociationConnector Association="despachoContableModel.fk_idCreditoFiscal_Factura" />
+        <AssociationConnector Association="despachoContableModel.fk_idServicio_factura" />
+        </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
 </edmx:Edmx>

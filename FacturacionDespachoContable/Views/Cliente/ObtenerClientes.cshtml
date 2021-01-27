@@ -1,0 +1,43 @@
+﻿@model IEnumerable<FacturacionDespachoContable.Models.cliente>
+
+@{
+    Layout = null;
+}
+
+
+    <table id="tablaClientes" class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.nombreCompleto)
+            </th>
+
+            <th>
+                @Html.DisplayNameFor(model => model.nit)
+            </th>
+            
+            
+            <th>
+                @Html.DisplayNameFor(model => model.municipio.nombre)
+            </th>
+            
+        </tr>
+    
+    @foreach (var item in Model) {
+        <tr onclick="agregarCliente(@item.idCliente)" style="cursor:pointer">
+
+            <td class="nombreCompleto">
+                @Html.DisplayFor(modelItem => item.nombreCompleto)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.nit)
+            </td>
+            
+            <td>
+                @Html.DisplayFor(modelItem => item.municipio.nombre)
+            </td>
+            
+        </tr>
+    }
+    
+    </table>

@@ -137,5 +137,11 @@ namespace FacturacionDespachoContable.Controllers
             }
             base.Dispose(disposing);
         }
+
+        public async Task<ActionResult> ObtenerClientes()
+        {
+            IEnumerable<cliente> clientes = await db.cliente.ToArrayAsync();
+            return View(clientes);
+        }
     }
 }

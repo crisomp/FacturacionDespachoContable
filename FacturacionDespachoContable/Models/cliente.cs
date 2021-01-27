@@ -11,23 +11,46 @@ namespace FacturacionDespachoContable.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class cliente
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public cliente()
         {
             this.creditoFiscal = new HashSet<creditoFiscal>();
+            this.factura = new HashSet<factura>();
         }
     
         public int idCliente { get; set; }
+
+        [Required(ErrorMessage ="Requerido"), Display(Name ="Nombre Completo")]
+        [MaxLength(40,ErrorMessage ="Maximo 40"), MinLength(10, ErrorMessage ="Minimo 10")]
         public string nombreCompleto { get; set; }
+
+        [Required(ErrorMessage = "Requerido"), Display(Name = "NIT")]
+        [MaxLength(17, ErrorMessage = "Maximo 17"), MinLength(17, ErrorMessage = "Minimo 17")]
         public string nit { get; set; }
+
+        [Required(ErrorMessage = "Requerido"), Display(Name = "Registro")]
+        [MaxLength(8, ErrorMessage = "Maximo 8"), MinLength(7, ErrorMessage = "Minimo 7")]
         public string registro { get; set; }
+
+        [Required(ErrorMessage = "Requerido"), Display(Name = "Giro")]
+        [MaxLength(40, ErrorMessage = "Maximo 40"), MinLength(10, ErrorMessage = "Minimo 10")]
         public string giro { get; set; }
+
+        [Required(ErrorMessage = "Requerido"), Display(Name = "Nombre Completo")]
+        [MaxLength(30, ErrorMessage = "Maximo 30"), MinLength(10, ErrorMessage = "Minimo 10")]
         public string direccion { get; set; }
+
+        [Required(ErrorMessage = "Requerido"), Display(Name = "Estado")]
         public int idEstado { get; set; }
+        [Required(ErrorMessage = "Requerido"), Display(Name = "Departamento")]
+
         public int idDepartamento { get; set; }
+        [Required(ErrorMessage = "Requerido"), Display(Name = "Municipio")]
+
         public int idMunicipio { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -35,5 +58,7 @@ namespace FacturacionDespachoContable.Models
         public virtual departamento departamento { get; set; }
         public virtual estado estado { get; set; }
         public virtual municipio municipio { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<factura> factura { get; set; }
     }
 }

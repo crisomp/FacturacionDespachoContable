@@ -124,5 +124,14 @@ namespace FacturacionDespachoContable.Controllers
             }
             base.Dispose(disposing);
         }
+
+        [HttpPost]
+        public async Task<ActionResult> ObtenerServicios()
+        {
+            List<servicio> servicios = await db.servicio.ToListAsync();
+            return View(servicios);
+        }
+
+        
     }
 }

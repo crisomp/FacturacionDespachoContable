@@ -11,7 +11,8 @@ namespace FacturacionDespachoContable.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class departamento
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -21,6 +22,8 @@ namespace FacturacionDespachoContable.Models
         }
     
         public int idDepartamento { get; set; }
+
+        [Required(ErrorMessage = "Requerido"), Display(Name = "Departamento"), MaxLength(30, ErrorMessage ="Maximo 30")]
         public string nombre { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

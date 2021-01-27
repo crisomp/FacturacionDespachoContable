@@ -1,0 +1,81 @@
+﻿@model IEnumerable<FacturacionDespachoContable.Models.creditoFiscal>
+
+@{
+    Layout = null;
+    decimal iva = 0;
+    decimal total = 0;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>imprimir</title>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+</head>
+<body>
+
+    <div class="alert alert-dark text-center ">
+        <h4 class="font-weight-bolder">REPORTE VENTA SERVICIOS</h4>
+        <p>CREDITO FISCAL</p>
+
+        <div class="border text-uppercase text-right">
+            <p>Fecha: @DateTime.Now.ToLongDateString()</p>
+        </div>
+    </div>
+
+    <table class="table table-sm table-bordered">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.fecha)
+                </th>
+
+                <th>
+                    @Html.DisplayNameFor(model => model.cliente.nombreCompleto)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.iva)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.total)
+                </th>
+
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in Model)
+            {
+                iva = iva + item.iva;
+                total = total + item.total;
+                <tr>
+                    <td>
+                        @item.fecha.ToShortDateString()
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.cliente.nombreCompleto)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.iva)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.total)
+                    </td>
+
+
+                </tr>
+            }
+            <tr class="font-weight-bolder">
+                <td colspan="2">
+                    TOTALES
+                </td>
+                <td>$@iva</td>
+                <td>$@total</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

@@ -28,10 +28,12 @@ namespace FacturacionDespachoContable.Models
         public virtual DbSet<cliente> cliente { get; set; }
         public virtual DbSet<creditoFiscal> creditoFiscal { get; set; }
         public virtual DbSet<departamento> departamento { get; set; }
+        public virtual DbSet<detalleCreditoFiscal> detalleCreditoFiscal { get; set; }
         public virtual DbSet<estado> estado { get; set; }
         public virtual DbSet<municipio> municipio { get; set; }
         public virtual DbSet<servicio> servicio { get; set; }
         public virtual DbSet<usuario> usuario { get; set; }
-        public virtual DbSet<detalleCreditoFiscal> detalleCreditoFiscal { get; set; }
+        public virtual DbSet<detalleFactura> detalleFactura { get; set; }
+        public virtual DbSet<factura> factura { get; set; }
     }
 }

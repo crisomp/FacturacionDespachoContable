@@ -4,14 +4,14 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="despachoContableModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="despachoContableModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="cliente">
           <Key>
             <PropertyRef Name="idCliente" />
           </Key>
           <Property Name="idCliente" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="nombreCompleto" Type="varchar" MaxLength="50" Nullable="false" />
-          <Property Name="nit" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="nit" Type="varchar" MaxLength="17" Nullable="false" />
           <Property Name="registro" Type="varchar" MaxLength="8" Nullable="false" />
           <Property Name="giro" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="direccion" Type="varchar" MaxLength="30" Nullable="false" />
@@ -37,19 +37,23 @@
           <Property Name="idDepartamento" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="nombre" Type="varchar" MaxLength="30" Nullable="false" />
         </EntityType>
-        <!--Errores durante la generación:
-advertencia 6002: La tabla o vista 'despachoContable.dbo.detalleCreditoFiscal' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
         <EntityType Name="detalleCreditoFiscal">
           <Key>
             <PropertyRef Name="idDetalle" />
-            <PropertyRef Name="idCreditoFiscal" />
-            <PropertyRef Name="idServicio" />
-            <PropertyRef Name="cantidad" />
-            <PropertyRef Name="precio" />
-            <PropertyRef Name="valor" />
           </Key>
           <Property Name="idDetalle" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="idCreditoFiscal" Type="int" Nullable="false" />
+          <Property Name="idServicio" Type="int" Nullable="false" />
+          <Property Name="cantidad" Type="int" Nullable="false" />
+          <Property Name="precio" Type="decimal" Precision="12" Scale="2" Nullable="false" />
+          <Property Name="valor" Type="decimal" Precision="12" Scale="2" Nullable="false" />
+        </EntityType>
+        <EntityType Name="detalleFactura">
+          <Key>
+            <PropertyRef Name="idDetalle" />
+          </Key>
+          <Property Name="idDetalle" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="idFactura" Type="int" Nullable="false" />
           <Property Name="idServicio" Type="int" Nullable="false" />
           <Property Name="cantidad" Type="int" Nullable="false" />
           <Property Name="precio" Type="decimal" Precision="12" Scale="2" Nullable="false" />
@@ -61,6 +65,17 @@ advertencia 6002: La tabla o vista 'despachoContable.dbo.detalleCreditoFiscal' n
           </Key>
           <Property Name="idEstado" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="nombre" Type="varchar" MaxLength="30" Nullable="false" />
+        </EntityType>
+        <EntityType Name="factura">
+          <Key>
+            <PropertyRef Name="idFactura" />
+          </Key>
+          <Property Name="idFactura" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="idCliente" Type="int" Nullable="false" />
+          <Property Name="iva" Type="decimal" Precision="8" Scale="2" Nullable="false" />
+          <Property Name="total" Type="decimal" Precision="12" Scale="2" Nullable="false" />
+          <Property Name="fecha" Type="date" Nullable="false" />
+          <Property Name="numeroDocumento" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="municipio">
           <Key>
@@ -98,6 +113,18 @@ advertencia 6002: La tabla o vista 'despachoContable.dbo.detalleCreditoFiscal' n
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="fk_idClienteFactura">
+          <End Role="cliente" Type="Self.cliente" Multiplicity="1" />
+          <End Role="factura" Type="Self.factura" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="cliente">
+              <PropertyRef Name="idCliente" />
+            </Principal>
+            <Dependent Role="factura">
+              <PropertyRef Name="idCliente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="fk_idCreditoFiscal_DetalleCreditoFiscal">
           <End Role="creditoFiscal" Type="Self.creditoFiscal" Multiplicity="1" />
           <End Role="detalleCreditoFiscal" Type="Self.detalleCreditoFiscal" Multiplicity="*" />
@@ -107,6 +134,18 @@ advertencia 6002: La tabla o vista 'despachoContable.dbo.detalleCreditoFiscal' n
             </Principal>
             <Dependent Role="detalleCreditoFiscal">
               <PropertyRef Name="idCreditoFiscal" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_idCreditoFiscal_Factura">
+          <End Role="factura" Type="Self.factura" Multiplicity="1" />
+          <End Role="detalleFactura" Type="Self.detalleFactura" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="factura">
+              <PropertyRef Name="idFactura" />
+            </Principal>
+            <Dependent Role="detalleFactura">
+              <PropertyRef Name="idFactura" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -158,31 +197,44 @@ advertencia 6002: La tabla o vista 'despachoContable.dbo.detalleCreditoFiscal' n
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="fk_idServicio_factura">
+          <End Role="servicio" Type="Self.servicio" Multiplicity="1" />
+          <End Role="detalleFactura" Type="Self.detalleFactura" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="servicio">
+              <PropertyRef Name="idServicio" />
+            </Principal>
+            <Dependent Role="detalleFactura">
+              <PropertyRef Name="idServicio" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="despachoContableModelStoreContainer">
           <EntitySet Name="cliente" EntityType="Self.cliente" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="creditoFiscal" EntityType="Self.creditoFiscal" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="departamento" EntityType="Self.departamento" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="detalleCreditoFiscal" EntityType="Self.detalleCreditoFiscal" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="detalleFactura" EntityType="Self.detalleFactura" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="estado" EntityType="Self.estado" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="factura" EntityType="Self.factura" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="municipio" EntityType="Self.municipio" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="servicio" EntityType="Self.servicio" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="usuario" EntityType="Self.usuario" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="detalleCreditoFiscal" EntityType="Self.detalleCreditoFiscal" store:Type="Tables" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [detalleCreditoFiscal].[idDetalle] AS [idDetalle], 
-    [detalleCreditoFiscal].[idCreditoFiscal] AS [idCreditoFiscal], 
-    [detalleCreditoFiscal].[idServicio] AS [idServicio], 
-    [detalleCreditoFiscal].[cantidad] AS [cantidad], 
-    [detalleCreditoFiscal].[precio] AS [precio], 
-    [detalleCreditoFiscal].[valor] AS [valor]
-    FROM [dbo].[detalleCreditoFiscal] AS [detalleCreditoFiscal]</DefiningQuery>
-          </EntitySet>
           <AssociationSet Name="fk_idClienteCreditoFiscal" Association="Self.fk_idClienteCreditoFiscal">
             <End Role="cliente" EntitySet="cliente" />
             <End Role="creditoFiscal" EntitySet="creditoFiscal" />
           </AssociationSet>
+          <AssociationSet Name="fk_idClienteFactura" Association="Self.fk_idClienteFactura">
+            <End Role="cliente" EntitySet="cliente" />
+            <End Role="factura" EntitySet="factura" />
+          </AssociationSet>
           <AssociationSet Name="fk_idCreditoFiscal_DetalleCreditoFiscal" Association="Self.fk_idCreditoFiscal_DetalleCreditoFiscal">
             <End Role="creditoFiscal" EntitySet="creditoFiscal" />
             <End Role="detalleCreditoFiscal" EntitySet="detalleCreditoFiscal" />
+          </AssociationSet>
+          <AssociationSet Name="fk_idCreditoFiscal_Factura" Association="Self.fk_idCreditoFiscal_Factura">
+            <End Role="factura" EntitySet="factura" />
+            <End Role="detalleFactura" EntitySet="detalleFactura" />
           </AssociationSet>
           <AssociationSet Name="fk_idDepartamentoCliente" Association="Self.fk_idDepartamentoCliente">
             <End Role="departamento" EntitySet="departamento" />
@@ -200,9 +252,12 @@ advertencia 6002: La tabla o vista 'despachoContable.dbo.detalleCreditoFiscal' n
             <End Role="servicio" EntitySet="servicio" />
             <End Role="detalleCreditoFiscal" EntitySet="detalleCreditoFiscal" />
           </AssociationSet>
+          <AssociationSet Name="fk_idServicio_factura" Association="Self.fk_idServicio_factura">
+            <End Role="servicio" EntitySet="servicio" />
+            <End Role="detalleFactura" EntitySet="detalleFactura" />
+          </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="despachoContableModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -212,7 +267,7 @@ advertencia 6002: La tabla o vista 'despachoContable.dbo.detalleCreditoFiscal' n
           </Key>
           <Property Name="idCliente" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="nombreCompleto" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="nit" Type="String" MaxLength="16" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="nit" Type="String" MaxLength="17" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="registro" Type="String" MaxLength="8" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="giro" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="direccion" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
@@ -223,6 +278,7 @@ advertencia 6002: La tabla o vista 'despachoContable.dbo.detalleCreditoFiscal' n
           <NavigationProperty Name="departamento" Relationship="Self.fk_idDepartamentoCliente" FromRole="cliente" ToRole="departamento" />
           <NavigationProperty Name="estado" Relationship="Self.fk_idEstadoCliente" FromRole="cliente" ToRole="estado" />
           <NavigationProperty Name="municipio" Relationship="Self.fk_idMunicipioCliente" FromRole="cliente" ToRole="municipio" />
+          <NavigationProperty Name="factura" Relationship="despachoContableModel.fk_idClienteFactura" FromRole="cliente" ToRole="factura" />
         </EntityType>
         <EntityType Name="creditoFiscal">
           <Key>
@@ -244,6 +300,19 @@ advertencia 6002: La tabla o vista 'despachoContable.dbo.detalleCreditoFiscal' n
           <Property Name="idDepartamento" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="nombre" Type="String" MaxLength="30" FixedLength="false" Unicode="false" Nullable="false" />
           <NavigationProperty Name="cliente" Relationship="Self.fk_idDepartamentoCliente" FromRole="departamento" ToRole="cliente" />
+        </EntityType>
+        <EntityType Name="detalleCreditoFiscal">
+          <Key>
+            <PropertyRef Name="idDetalle" />
+          </Key>
+          <Property Name="idDetalle" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="idCreditoFiscal" Type="Int32" Nullable="false" />
+          <Property Name="idServicio" Type="Int32" Nullable="false" />
+          <Property Name="cantidad" Type="Int32" Nullable="false" />
+          <Property Name="precio" Type="Decimal" Precision="12" Scale="2" Nullable="false" />
+          <Property Name="valor" Type="Decimal" Precision="12" Scale="2" Nullable="false" />
+          <NavigationProperty Name="creditoFiscal" Relationship="Self.fk_idCreditoFiscal_DetalleCreditoFiscal" FromRole="detalleCreditoFiscal" ToRole="creditoFiscal" />
+          <NavigationProperty Name="servicio" Relationship="Self.fk_idServicio_DetalleCreditoFiscal" FromRole="detalleCreditoFiscal" ToRole="servicio" />
         </EntityType>
         <EntityType Name="estado">
           <Key>
@@ -269,6 +338,7 @@ advertencia 6002: La tabla o vista 'despachoContable.dbo.detalleCreditoFiscal' n
           <Property Name="nombre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="precio" Type="Decimal" Precision="12" Scale="2" Nullable="false" />
           <NavigationProperty Name="detalleCreditoFiscal" Relationship="Self.fk_idServicio_DetalleCreditoFiscal" FromRole="servicio" ToRole="detalleCreditoFiscal" />
+          <NavigationProperty Name="detalleFactura" Relationship="despachoContableModel.fk_idServicio_factura" FromRole="servicio" ToRole="detalleFactura" />
         </EntityType>
         <EntityType Name="usuario">
           <Key>
@@ -278,24 +348,6 @@ advertencia 6002: La tabla o vista 'despachoContable.dbo.detalleCreditoFiscal' n
           <Property Name="nombreCompleto" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="usuario1" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="contrasena" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
-        </EntityType>
-        <EntityType Name="detalleCreditoFiscal">
-          <Key>
-            <PropertyRef Name="idDetalle" />
-            <PropertyRef Name="idCreditoFiscal" />
-            <PropertyRef Name="idServicio" />
-            <PropertyRef Name="cantidad" />
-            <PropertyRef Name="precio" />
-            <PropertyRef Name="valor" />
-          </Key>
-          <Property Name="idDetalle" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="idCreditoFiscal" Type="Int32" Nullable="false" />
-          <Property Name="idServicio" Type="Int32" Nullable="false" />
-          <Property Name="cantidad" Type="Int32" Nullable="false" />
-          <Property Name="precio" Type="Decimal" Precision="12" Scale="2" Nullable="false" />
-          <Property Name="valor" Type="Decimal" Precision="12" Scale="2" Nullable="false" />
-          <NavigationProperty Name="creditoFiscal" Relationship="Self.fk_idCreditoFiscal_DetalleCreditoFiscal" FromRole="detalleCreditoFiscal" ToRole="creditoFiscal" />
-          <NavigationProperty Name="servicio" Relationship="Self.fk_idServicio_DetalleCreditoFiscal" FromRole="detalleCreditoFiscal" ToRole="servicio" />
         </EntityType>
         <Association Name="fk_idClienteCreditoFiscal">
           <End Role="cliente" Type="Self.cliente" Multiplicity="1" />
@@ -369,15 +421,15 @@ advertencia 6002: La tabla o vista 'despachoContable.dbo.detalleCreditoFiscal' n
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="despachoContableEntities" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="despachoContableEntities1" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="cliente" EntityType="Self.cliente" />
           <EntitySet Name="creditoFiscal" EntityType="Self.creditoFiscal" />
           <EntitySet Name="departamento" EntityType="Self.departamento" />
+          <EntitySet Name="detalleCreditoFiscal" EntityType="Self.detalleCreditoFiscal" />
           <EntitySet Name="estado" EntityType="Self.estado" />
           <EntitySet Name="municipio" EntityType="Self.municipio" />
           <EntitySet Name="servicio" EntityType="Self.servicio" />
           <EntitySet Name="usuario" EntityType="Self.usuario" />
-          <EntitySet Name="detalleCreditoFiscal" EntityType="Self.detalleCreditoFiscal" />
           <AssociationSet Name="fk_idClienteCreditoFiscal" Association="Self.fk_idClienteCreditoFiscal">
             <End Role="cliente" EntitySet="cliente" />
             <End Role="creditoFiscal" EntitySet="creditoFiscal" />
@@ -402,13 +454,89 @@ advertencia 6002: La tabla o vista 'despachoContable.dbo.detalleCreditoFiscal' n
             <End Role="servicio" EntitySet="servicio" />
             <End Role="detalleCreditoFiscal" EntitySet="detalleCreditoFiscal" />
           </AssociationSet>
-        </EntityContainer>
-      </Schema>
+          <EntitySet Name="detalleFactura" EntityType="despachoContableModel.detalleFactura" />
+          <EntitySet Name="factura" EntityType="despachoContableModel.factura" />
+          <AssociationSet Name="fk_idClienteFactura" Association="despachoContableModel.fk_idClienteFactura">
+            <End Role="cliente" EntitySet="cliente" />
+            <End Role="factura" EntitySet="factura" />
+          </AssociationSet>
+          <AssociationSet Name="fk_idCreditoFiscal_Factura" Association="despachoContableModel.fk_idCreditoFiscal_Factura">
+            <End Role="factura" EntitySet="factura" />
+            <End Role="detalleFactura" EntitySet="detalleFactura" />
+          </AssociationSet>
+          <AssociationSet Name="fk_idServicio_factura" Association="despachoContableModel.fk_idServicio_factura">
+            <End Role="servicio" EntitySet="servicio" />
+            <End Role="detalleFactura" EntitySet="detalleFactura" />
+          </AssociationSet>
+          </EntityContainer>
+        <EntityType Name="detalleFactura">
+          <Key>
+            <PropertyRef Name="idDetalle" />
+          </Key>
+          <Property Name="idDetalle" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="idFactura" Type="Int32" Nullable="false" />
+          <Property Name="idServicio" Type="Int32" Nullable="false" />
+          <Property Name="cantidad" Type="Int32" Nullable="false" />
+          <Property Name="precio" Type="Decimal" Nullable="false" Precision="12" Scale="2" />
+          <Property Name="valor" Type="Decimal" Nullable="false" Precision="12" Scale="2" />
+          <NavigationProperty Name="factura" Relationship="despachoContableModel.fk_idCreditoFiscal_Factura" FromRole="detalleFactura" ToRole="factura" />
+          <NavigationProperty Name="servicio" Relationship="despachoContableModel.fk_idServicio_factura" FromRole="detalleFactura" ToRole="servicio" />
+        </EntityType>
+        <EntityType Name="factura">
+          <Key>
+            <PropertyRef Name="idFactura" />
+          </Key>
+          <Property Name="idFactura" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="idCliente" Type="Int32" Nullable="false" />
+          <Property Name="iva" Type="Decimal" Nullable="false" Precision="8" Scale="2" />
+          <Property Name="total" Type="Decimal" Nullable="false" Precision="12" Scale="2" />
+          <Property Name="fecha" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="numeroDocumento" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="cliente" Relationship="despachoContableModel.fk_idClienteFactura" FromRole="factura" ToRole="cliente" />
+          <NavigationProperty Name="detalleFactura" Relationship="despachoContableModel.fk_idCreditoFiscal_Factura" FromRole="factura" ToRole="detalleFactura" />
+        </EntityType>
+        <Association Name="fk_idClienteFactura">
+          <End Type="despachoContableModel.cliente" Role="cliente" Multiplicity="1" />
+          <End Type="despachoContableModel.factura" Role="factura" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="cliente">
+              <PropertyRef Name="idCliente" />
+            </Principal>
+            <Dependent Role="factura">
+              <PropertyRef Name="idCliente" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_idCreditoFiscal_Factura">
+          <End Type="despachoContableModel.factura" Role="factura" Multiplicity="1" />
+          <End Type="despachoContableModel.detalleFactura" Role="detalleFactura" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="factura">
+              <PropertyRef Name="idFactura" />
+            </Principal>
+            <Dependent Role="detalleFactura">
+              <PropertyRef Name="idFactura" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_idServicio_factura">
+          <End Type="despachoContableModel.servicio" Role="servicio" Multiplicity="1" />
+          <End Type="despachoContableModel.detalleFactura" Role="detalleFactura" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="servicio">
+              <PropertyRef Name="idServicio" />
+            </Principal>
+            <Dependent Role="detalleFactura">
+              <PropertyRef Name="idServicio" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="despachoContableModelStoreContainer" CdmEntityContainer="despachoContableEntities">
+        <EntityContainerMapping StorageEntityContainer="despachoContableModelStoreContainer" CdmEntityContainer="despachoContableEntities1">
           <EntitySetMapping Name="cliente">
             <EntityTypeMapping TypeName="despachoContableModel.cliente">
               <MappingFragment StoreEntitySet="cliente">
@@ -441,6 +569,18 @@ advertencia 6002: La tabla o vista 'despachoContable.dbo.detalleCreditoFiscal' n
               <MappingFragment StoreEntitySet="departamento">
                 <ScalarProperty Name="idDepartamento" ColumnName="idDepartamento" />
                 <ScalarProperty Name="nombre" ColumnName="nombre" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="detalleCreditoFiscal">
+            <EntityTypeMapping TypeName="despachoContableModel.detalleCreditoFiscal">
+              <MappingFragment StoreEntitySet="detalleCreditoFiscal">
+                <ScalarProperty Name="idDetalle" ColumnName="idDetalle" />
+                <ScalarProperty Name="idCreditoFiscal" ColumnName="idCreditoFiscal" />
+                <ScalarProperty Name="idServicio" ColumnName="idServicio" />
+                <ScalarProperty Name="cantidad" ColumnName="cantidad" />
+                <ScalarProperty Name="precio" ColumnName="precio" />
+                <ScalarProperty Name="valor" ColumnName="valor" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -479,15 +619,27 @@ advertencia 6002: La tabla o vista 'despachoContable.dbo.detalleCreditoFiscal' n
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="detalleCreditoFiscal">
-            <EntityTypeMapping TypeName="despachoContableModel.detalleCreditoFiscal">
-              <MappingFragment StoreEntitySet="detalleCreditoFiscal">
-                <ScalarProperty Name="idDetalle" ColumnName="idDetalle" />
-                <ScalarProperty Name="idCreditoFiscal" ColumnName="idCreditoFiscal" />
-                <ScalarProperty Name="idServicio" ColumnName="idServicio" />
-                <ScalarProperty Name="cantidad" ColumnName="cantidad" />
-                <ScalarProperty Name="precio" ColumnName="precio" />
+          <EntitySetMapping Name="detalleFactura">
+            <EntityTypeMapping TypeName="despachoContableModel.detalleFactura">
+              <MappingFragment StoreEntitySet="detalleFactura">
                 <ScalarProperty Name="valor" ColumnName="valor" />
+                <ScalarProperty Name="precio" ColumnName="precio" />
+                <ScalarProperty Name="cantidad" ColumnName="cantidad" />
+                <ScalarProperty Name="idServicio" ColumnName="idServicio" />
+                <ScalarProperty Name="idFactura" ColumnName="idFactura" />
+                <ScalarProperty Name="idDetalle" ColumnName="idDetalle" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="factura">
+            <EntityTypeMapping TypeName="despachoContableModel.factura">
+              <MappingFragment StoreEntitySet="factura">
+                <ScalarProperty Name="numeroDocumento" ColumnName="numeroDocumento" />
+                <ScalarProperty Name="fecha" ColumnName="fecha" />
+                <ScalarProperty Name="total" ColumnName="total" />
+                <ScalarProperty Name="iva" ColumnName="iva" />
+                <ScalarProperty Name="idCliente" ColumnName="idCliente" />
+                <ScalarProperty Name="idFactura" ColumnName="idFactura" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

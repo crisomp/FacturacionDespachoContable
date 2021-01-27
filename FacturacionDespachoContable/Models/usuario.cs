@@ -17,16 +17,15 @@ namespace FacturacionDespachoContable.Models
     {
         public int idUsuario { get; set; }
 
-        [Display(Name ="Nombre Completo")]
-        [Required(ErrorMessage ="Requerido"),MaxLength(50,ErrorMessage ="Maximo 50")]
+        [Required(ErrorMessage = "Requerido"), Display(Name = "Nombre"), MaxLength(35, ErrorMessage = "Maximo 35")]
         public string nombreCompleto { get; set; }
-
-        [Display(Name = "Usuario")]
-        [Required(ErrorMessage = "Requerido"), MaxLength(10, ErrorMessage = "Maximo 10"),MinLength(5,ErrorMessage ="Minimo 5")]
+        
+        [Required(ErrorMessage = "Requerido"), Display(Name = "Usuario"), MaxLength(10, ErrorMessage = "Maximo 10")]
+        [MinLength(5, ErrorMessage ="Minimo 5")]
         public string usuario1 { get; set; }
 
-        [Display(Name = "Contraseña")]
-        [Required(ErrorMessage = "Requerido"), MaxLength(10, ErrorMessage = "Maximo 10"), MinLength(5, ErrorMessage = "Minimo 5")]
+        [Required(ErrorMessage = "Requerido"), Display(Name = "Contraseña"), MaxLength(10, ErrorMessage = "Maximo 10")]
+        [MinLength(5, ErrorMessage = "Minimo 5")]
         public string contrasena { get; set; }
     }
 }

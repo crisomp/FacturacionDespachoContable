@@ -11,7 +11,9 @@ namespace FacturacionDespachoContable.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+    using Xunit;
+
     public partial class estado
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -21,6 +23,8 @@ namespace FacturacionDespachoContable.Models
         }
     
         public int idEstado { get; set; }
+
+        [Required(ErrorMessage = "Requerido"), Display(Name = "Estado"),MaxLength(30, ErrorMessage ="Maximo 30")]
         public string nombre { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

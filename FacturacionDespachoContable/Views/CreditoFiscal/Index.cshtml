@@ -1,0 +1,524 @@
+﻿
+@{
+    ViewBag.Title = "Credito Fiscal";
+}
+
+
+<!-- ModalServicios -->
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="loader">
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ModalServicios -->
+<!-- ModalServicios -->
+<div class="modal fade" id="modalServicios" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="search">
+                    <input type="text" id="busquedaServicios" placeholder="Buscar ...">
+                    <i class="fa fa-search"></i>
+                </div>
+
+                <div id="loaderServicios">
+
+                </div>
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ModalServicios -->
+<!-- ModalClientes -->
+<div class="modal fade" id="modalClientes" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="search">
+                    <input type="text" id="busquedaClientes" placeholder="Buscar ...">
+                    <i class="fa fa-search"></i>
+                </div>
+
+                <div id="loaderClientes">
+
+                </div>
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ModalClientes -->
+
+<div class="rounded shadow p-3">
+    <div class="text-right p-3">
+
+        <select id="tipo">
+            <option value="1">Credito Fiscal</option>
+            <option value="2">Consumidor Final</option>
+        </select>
+        <button type="button" onclick="cancelarCreditoFiscal()" class="btn btn-secondary">
+            <i class="fa fa-trash"></i>
+        </button>
+
+        <button type="button" onclick="obtenerClientes()" class="btn btn-primary" data-toggle="modal" data-target="#modalClientes">
+            Clientes (F2)
+        </button>
+
+        <button type="button" onclick="obtenerServicios()" class="btn btn-primary" data-toggle="modal" data-target="#modalServicios">
+            Servicios (Ctrl)
+        </button>
+
+        <button onclick="guardar($('#tipo').val())" class="btn btn-info">
+            <i class="fa fa-save"></i>
+        </button>
+    </div>
+
+    <div class="row">
+        <div class="col-4">
+            <div class="alert alert-info">
+                Credito Fiscal
+            </div>
+            <div class="shadow" id="cliente" data-idCliente="">
+
+
+            </div>
+        </div>
+
+        <div class="col-8">
+
+            <div class="border" id="servicios">
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>SERVICIO</th>
+                            <th>CANTIDAD</th>
+                            <th>PRECIO</th>
+                            <th>VALOR</th>
+                        </tr>
+                    </thead>
+                    <tbody id="detalleServicio">
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3">
+                                TOTAL
+                            </td>
+                            <td id="total" data-total="">
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts{
+    <script>
+        const loading = "<center><div class='spinner-grow style='width: 5rem; height: 5rem;' text-dark' role = 'status'>  <span class='sr-only'>Loading...</span> </div><center/>";
+
+
+        $(document).ready(() => {
+
+
+            $("#modalServicios").on('shown.bs.modal', function () {
+                $(this).find('#busquedaServicios').val('');
+                $(this).find('#busquedaServicios').focus();
+            });
+
+
+            $("#modalClientes").on('shown.bs.modal', function () {
+                $(this).find('#busquedaClientes').val('');
+                $(this).find('#busquedaClientes').focus();
+            });
+
+            $(this).keyup(function (e) {
+
+                if (e.keyCode == 113) {
+
+                    $('#modalClientes').modal('show')
+                    obtenerClientes()
+
+                }
+
+            })
+
+            $(this).keyup(function (e) {
+
+                if (e.keyCode == 17) {
+
+                    $('#modalServicios').modal('show')
+                    obtenerServicios()
+
+                }
+
+            })
+
+
+        })
+
+
+        const eliminar = (elemento) => {
+
+            if (confirm("¿Desea eliminar el item?")) {
+                elemento.remove()
+                total()
+            }
+
+
+        }
+
+
+        const cancelarCreditoFiscal = () => {
+
+            $('#cliente').text('')
+            $('#cliente').attr('data-idCliente','')
+
+            $('#detalleServicio').text('')
+            total()
+        }
+
+
+        const total = () => {
+            var suma = 0
+
+            $('.detalle').each(function () {
+
+
+                let valor = Number($(this).attr('data-valor'))
+
+                suma += valor
+
+                console.log(valor)
+
+            })
+
+            const sumaDecimal = parseFloat(suma).toFixed(2)
+            $('#total').text(sumaDecimal)
+            $('#total').attr('data-total',sumaDecimal)
+
+        }
+
+
+
+        const guardar = (tipo) => {
+            const idCliente = $('#cliente').attr('data-idCliente')
+            const detalle = []
+            const total = $('#total').attr('data-total')
+
+            $('.detalle').each(function() {
+
+                let idServicio = $(this).attr('data-idServicio')
+                let cantidad = $(this).attr('data-cantidad')
+                let precio = $(this).attr('data-precio')
+                let valor = $(this).attr('data-valor')
+
+
+
+                detalle.push({ idServicio, cantidad, valor, precio })
+
+
+            })
+
+            if (total > 0 && idCliente != '') {
+
+                if (tipo === 1) {
+                    $.ajax({
+                        data: {
+                            detalle: detalle, idCliente: idCliente, total: total
+                        },
+                        method: 'POST',
+                        url: '@Url.Action("Guardar","CreditoFiscal")',
+                        beforeSend: () => {
+                            $('#modal').modal('show')
+                            $('#loader').html(loading)
+                        },
+                        success: () => {
+                            $('#loader').html("<div class='alert alert-info text-center'>Guardado</div>")
+
+                            cancelarCreditoFiscal();
+
+                        }
+
+                    })
+                } else {
+                    $.ajax({
+                        data: {
+                            detalle: detalle, idCliente: idCliente, total: total
+                        },
+                        method: 'POST',
+                        url: '@Url.Action("GuardarFactura", "CreditoFiscal")',
+                        beforeSend: () => {
+                            $('#modal').modal('show')
+                            $('#loader').html(loading)
+                        },
+                        success: () => {
+                            $('#loader').html("<div class='alert alert-info text-center'>Guardado</div>")
+
+                            cancelarCreditoFiscal();
+
+                        }
+
+                    })
+                }
+
+            } else {
+
+                alert("Verifique Clientes o Servicios")
+
+            }
+        }
+
+        const agregarServicio = ({idServicio,cantidad }) => {
+
+            $.ajax({
+                data: { idServicio: idServicio, cantidad: cantidad },
+                url: '@Url.Action("AgregarServicio","CreditoFiscal")',
+                method: 'POST',
+                beforeSend: () => {
+                    $('#modalServicios').modal('hide')
+
+                },
+                success: (data) => {
+
+                    console.log(data)
+
+                    let precio = parseFloat(data.precio).toFixed(2)
+                    let valor = parseFloat(data.valor).toFixed(2)
+
+                    let html = "<tr ondblclick='eliminar($(this))' class='detalle' data-idServicio='" + data.idServicio + "'  data-valor='" + valor + "' data-cantidad='" + data.cantidad + "' data-precio='" + precio +"'>"
+                    html += "<td>" + data.servicio.nombre + "</td>"
+                    html += "<td>" + data.cantidad + "</td>"
+                    html += "<td>" + precio + "</td>"
+                    html += "<td>" + valor + "</td>"
+                    html += "</tr>"
+
+                    $('#detalleServicio').prepend(html)
+
+                    total()
+
+                }
+            })
+
+        }
+
+        const agregarCliente = (idCliente) => {
+            $.ajax({
+                data: { idCliente: idCliente },
+                url: '@Url.Action("AgregarCliente", "CreditoFiscal")',
+                method: 'POST',
+                beforeSend: () => {
+
+                    $('#modalClientes').modal('hide')
+
+                },
+                success: (data) => {
+
+                    let html = ''
+
+                    html += "<div class='alert alert-secondary'>"
+                    html +=   "<i class='fa fa-user'></i>"
+
+                    html += data.nombreCompleto
+
+                    html += "<div class='badge badge-dark'>"
+
+                    html += data.municipio.nombre
+
+                    html += " - "
+
+                    html += data.registro
+                    html += "</div>"
+                    html += "</div>"
+
+
+                    $('#cliente').attr('data-idCliente', idCliente)
+
+                    $('#cliente').text('')
+                    $('#cliente').append(html)
+
+
+
+                }
+            })
+        }
+
+
+        const obtenerServicios = () => {
+            $.ajax({
+                url: '@Url.Action("ObtenerServicios", "Servicio")',
+                method: 'POST',
+                beforeSend: () => {
+
+                    $('#loaderServicios').html(loading)
+
+                },
+                success: (data) => {
+                    $('#loaderServicios').html(data)
+                    cargarBusquedaServicios()
+                }
+            })
+        }
+
+        const obtenerClientes = () => {
+            $.ajax({
+                url: '@Url.Action("ObtenerClientes", "Cliente")',
+                method: 'GET',
+                beforeSend: () => {
+
+                    $('#loaderClientes').html(loading)
+
+                },
+                success: (data) => {
+
+                    $('#loaderClientes').html(data)
+                    cargarBusquedaClientes()
+                }
+            })
+        }
+
+        let cargarBusquedaClientes = () => {
+
+            var busqueda = $('#busquedaClientes'), tabla = $('#tablaClientes tr .nombreCompleto');
+
+
+
+            $(tabla).each(function () {
+                var nombre = $(this);
+                //si presionamos la tecla
+
+                $(busqueda).keyup(function (e) {
+
+
+                    //cambiamos a minusculas
+                    this.value = this.value.toLowerCase();
+                    //
+                    var clase = $('.search i');
+
+                    if ($(busqueda).val() != '') {
+
+                        $(clase).attr('class', 'fa fa-times');
+
+                    } else {
+
+                        $(clase).attr('class', 'fa fa-search');
+
+                    }
+                    if ($(clase).hasClass('fa fa-times')) {
+
+                        $(clase).click(function () {
+                            //borramos el contenido del input
+                            $(busqueda).val('');
+                            //mostramos todas las listas
+                            $(nombre).parent().show();
+                            //volvemos a añadir la clase para mostrar la lupa
+                            $(clase).attr('class', 'fa fa-search');
+                        });
+
+                    }
+                    //ocultamos toda la lista
+                    $(nombre).parent().hide();
+                    //valor del h3
+                    var txt = $(this).val();
+                    //si hay coincidencias en la búsqueda cambiando a minusculas
+                    if ($(nombre).text().toLowerCase().indexOf(txt) > -1) {
+                        //mostramos las listas que coincidan
+                        $(nombre).parent().show();
+                    }
+                });
+            });
+        }
+
+
+        let cargarBusquedaServicios = () => {
+
+            var busqueda = $('#busquedaServicios'), tabla = $('#tablaServicios tr .nombreServicio');
+
+
+
+            $(tabla).each(function () {
+                var nombre = $(this);
+                //si presionamos la tecla
+
+                $(busqueda).keyup(function (e) {
+
+
+                    //cambiamos a minusculas
+                    this.value = this.value.toLowerCase();
+                    //
+                    var clase = $('.search i');
+
+                    if ($(busqueda).val() != '') {
+
+                        $(clase).attr('class', 'fa fa-times');
+
+                    } else {
+
+                        $(clase).attr('class', 'fa fa-search');
+
+                    }
+                    if ($(clase).hasClass('fa fa-times')) {
+
+                        $(clase).click(function () {
+                            //borramos el contenido del input
+                            $(busqueda).val('');
+                            //mostramos todas las listas
+                            $(nombre).parent().show();
+                            //volvemos a añadir la clase para mostrar la lupa
+                            $(clase).attr('class', 'fa fa-search');
+                        });
+
+                    }
+                    //ocultamos toda la lista
+                    $(nombre).parent().hide();
+                    //valor del h3
+                    var txt = $(this).val();
+                    //si hay coincidencias en la búsqueda cambiando a minusculas
+                    if ($(nombre).text().toLowerCase().indexOf(txt) > -1) {
+                        //mostramos las listas que coincidan
+                        $(nombre).parent().show();
+                    }
+                });
+            });
+        }
+    </script>
+
+}

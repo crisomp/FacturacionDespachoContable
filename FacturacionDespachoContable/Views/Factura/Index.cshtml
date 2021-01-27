@@ -1,0 +1,74 @@
+﻿@model IEnumerable<FacturacionDespachoContable.Models.factura>
+
+@{
+    ViewBag.Title = "CF";
+    decimal iva = 0;
+    decimal total = 0;
+}
+
+<h2>Archivo</h2>
+<div>
+    <form action="" method="get">
+
+        <input type="date" name="fecha" value="@DateTime.Today.ToShortDateString()" />
+        <button class="btn btn-info">
+            <i class="fa fa-search"></i>
+        </button>
+        <a target="_blank" class="btn btn-primary" href="@Url.Action("imprimir")">
+            <i class="fa fa-print"></i>
+        </a>
+
+    </form>
+</div>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.fecha)
+        </th>
+
+        <th>
+            @Html.DisplayNameFor(model => model.cliente.nombreCompleto)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.iva)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.total)
+        </th>
+
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        iva = iva + item.iva;
+        total = total + item.total;
+        <tr>
+            <td>
+                @item.fecha.ToShortDateString()
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.cliente.nombreCompleto)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.iva)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.total)
+            </td>
+
+            <td>
+                @Html.ActionLink("Detalles", "Detalles", new { idFactura = item.idFactura })
+            </td>
+        </tr>
+    }
+    <tr class="font-weight-bolder">
+        <td colspan="2">
+            TOTALES
+        </td>
+        <td>$@iva</td>
+        <td>$@total</td>
+    </tr>
+</table>

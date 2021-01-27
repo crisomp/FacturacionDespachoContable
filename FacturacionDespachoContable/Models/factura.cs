@@ -13,22 +13,21 @@ namespace FacturacionDespachoContable.Models
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
 
-    public partial class creditoFiscal
+    public partial class factura
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public creditoFiscal()
+        public factura()
         {
-            this.detalleCreditoFiscal = new HashSet<detalleCreditoFiscal>();
+            this.detalleFactura = new HashSet<detalleFactura>();
         }
     
-        public int idCreditoFiscal { get; set; }
-        
+        public int idFactura { get; set; }
+
         [Required(ErrorMessage = "Requerido"), Display(Name = "Cliente")]
         public int idCliente { get; set; }
 
         [Required(ErrorMessage = "Requerido"), Display(Name = "IVA")]
         public decimal iva { get; set; }
-
         [Required(ErrorMessage = "Requerido"), Display(Name = "Total")]
         public decimal total { get; set; }
 
@@ -38,6 +37,6 @@ namespace FacturacionDespachoContable.Models
     
         public virtual cliente cliente { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<detalleCreditoFiscal> detalleCreditoFiscal { get; set; }
+        public virtual ICollection<detalleFactura> detalleFactura { get; set; }
     }
 }
